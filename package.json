@@ -2,7 +2,7 @@
   "name": "pm2-telegram-notify",
   "version": "0.1.0",
   "description": "A PM2 module to emit events to Telegram",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,7 +21,7 @@
       "email": "mattpker@gmail.com",
       "url": "https://github.com/mattpker"
     }
-  ], 
+  ],
   "licenses": [
     {
       "type": "MIT",
@@ -34,8 +34,8 @@
   "homepage": "https://github.com/korolyov88/pm2-telegram-notify",
   "dependencies": {
     "pm2": "^0.15.10",
-    "pmx": "^0.5.5",
-    "request": "^2.67.0"
+    "pmx": "^0.5.9",
+    "request": "^2.81.0"
   },
   "config": {
     "telegram_url": null,
@@ -53,6 +53,6 @@
     "online": false,
     "buffer": true,
     "buffer_seconds": 1,
-    "queue_max": 100
+    "queue_max": 10
   }
 }

@@ -1,6 +1,5 @@
 'use strict';
 
-var os = require('os');
 var pm2 = require('pm2');
 var pmx = require('pmx');
 var request = require('request');
@@ -10,13 +9,10 @@ var conf = pmx.initModule();
 
 // initialize buffer and queue_max opts
 // buffer seconds can be between 1 and 5
-conf.buffer_seconds = (conf.buffer_seconds > 0 && conf.buffer_seconds < 5) ? conf.buffer_seconds : 1;
+conf.buffer_seconds = (conf.buffer_seconds > 0 && conf.buffer_seconds < 20) ? conf.buffer_seconds : 15;
 
 // queue max can be between 10 and 100
-conf.queue_max = (conf.queue_max > 10 && conf.queue_max <= 100) ? conf.queue_max : 100;
-
-// Set the events that will trigger the color red
-var redEvents = ['stop', 'exit', 'delete', 'error', 'kill', 'exception', 'restart overlimit', 'suppressed'];
+conf.queue_max = (conf.queue_max > 9 && conf.queue_max <= 100) ? conf.queue_max : 10;
 
 // create the message queue
 var messages = [];
@@ -38,32 +34,15 @@ function sendTelegram(message) {
     // If a Telegram URL is not set, we do not want to continue and nofify the user that it needs to be set. URL must be formatted as ' https://api.telegram.org/bot<TOKEN>/sendMessage'
     if (!conf.telegram_url) return console.error("There is no telegram URL set, please set the telegram URL: 'pm2 set pm2-telegram-notify:telegram_url https://telegram_url'");
 
-    // The default color for events should be green
-    var color = '#008E00';
-    // If the event is listed in redEvents, set the color to red
-    if (redEvents.indexOf(event) > -1) {
-        color = '#D00000';
-    }
 
-    // The JSON payload to send to the telegram
-    var text  = {
-        username: conf.username || os.hostname(),
-        attachments: [{
-            fallback: name + ' - ' + event + ' - ' + description,
-            color: color,
-            fields: [{
-                title: name + ' - ' + event,
-                value: description,
-                short: false
-            }]
-        }]
-    };
+    // Text to send to the telegram
+    var text  = (name + ' - ' + event +  ' - ' +  description);
 
     // Options for the post request
     var options = {
         method: 'post',
         headers: {'content-type' : 'application/x-www-form-urlencoded'},
-        body: "chat_id=<YOUR CHAT_ID>&text="+text,
+        body: "chat_id=321719630&text="+text,
         json: true,
         url: conf.telegram_url
     };
@@ -71,9 +50,7 @@ function sendTelegram(message) {
     // Finally, make the post request to the Telegram
     request(options, function(err, res, body) {
         if (err) return console.error(err);
-        if (body !== 'ok') {
-            console.error('Error sending notification to Telegram, verify that the Telegram URL for incoming message is correct.');
-        }
+        console.log(body)
     });
 }
 
@@ -87,7 +64,7 @@ function bufferMessage() {
 
     // continue shifting elements off the queue while they are the same event and timestamp so they can be buffered together into a single request
     while (messages.length
-        && (messages[0].timestamp >= nextMessage.timestamp && messages[0].timestamp < (nextMessage.timestamp + conf.buffer_seconds))
+        && (messages[0].timestamp >= nextMessage.timestamp && messages[0].timestamp < (nextMessage.timestamp  + conf.buffer_seconds))
         && messages[0].event === nextMessage.event) {
 
         // append description to our buffer and shift the message off the queue and discard it
@@ -108,9 +85,9 @@ function bufferMessage() {
 // Function to process the message queue
 function processQueue() {
 
-    // If we have a message in the message queue, removed it from the queue and send it to slack
+    // If we have a message in the message queue, removed it from the queue and send it to telegram
     if (messages.length > 0) {
-        sendSlack(bufferMessage());
+        sendTelegram(bufferMessage());
     }
 
     // If there are over conf.queue_max messages in the queue, send the suppression message if it has not been sent and delete all the messages in the queue after this amount (default: 100)
@@ -118,7 +95,7 @@ function processQueue() {
         if (!suppressed.isSuppressed) {
             suppressed.isSuppressed = true;
             suppressed.date = new Date().getTime();
-            sendSlack({
+            sendTelegram({
                 name: 'pm2-telegram-notify',
                 event: 'suppressed',
                 description: 'Messages are being suppressed due to rate limiting.'
@@ -133,9 +110,9 @@ function processQueue() {
     }
 
     // Wait 10 seconds and then process the next message in the queue
-    setTimeout(function() {
-        processQueue();
-    }, 10000);
+     setTimeout(function() {
+         processQueue();
+     }, 10000);
 }
 
 // Start listening on the PM2 BUS
@@ -149,7 +126,7 @@ pm2.launchBus(function(err, bus) {
                     name: data.process.name,
                     event: 'log',
                     description: data.data,
-                    timestamp: Math.floor(Date.now() / 1000),
+                    timestamp: Math.floor(Date.now() / 100000),
                 });
             }
         });
@@ -163,7 +140,7 @@ pm2.launchBus(function(err, bus) {
                     name: data.process.name,
                     event: 'error',
                     description: data.data,
-                    timestamp: Math.floor(Date.now() / 1000),
+                    timestamp: Math.floor(Date.now() / 100000),
                 });
             }
         });
@@ -176,7 +153,7 @@ pm2.launchBus(function(err, bus) {
                 name: 'PM2',
                 event: 'kill',
                 description: data.msg,
-                timestamp: Math.floor(Date.now() / 1000),
+                timestamp: Math.floor(Date.now() / 100000),
             });
         });
     }
@@ -189,7 +166,7 @@ pm2.launchBus(function(err, bus) {
                     name: data.process.name,
                     event: 'exception',
                     description: JSON.stringify(data.data),
-                    timestamp: Math.floor(Date.now() / 1000),
+                    timestamp: Math.floor(Date.now() / 100000),
                 });
             }
         });
@@ -203,7 +180,7 @@ pm2.launchBus(function(err, bus) {
                     name: data.process.name,
                     event: data.event,
                     description: 'The following event has occured on the PM2 process ' + data.process.name + ': ' + data.event,
-                    timestamp: Math.floor(Date.now() / 1000),
+                    timestamp: Math.floor(Date.now() / 100000),
                 });
             }
         }
