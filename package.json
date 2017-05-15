@@ -38,6 +38,7 @@
     "request": "^2.67.0"
   },
   "config": {
+    "telegram_url": null,
     "log": false,
     "error": true,
     "kill": true,

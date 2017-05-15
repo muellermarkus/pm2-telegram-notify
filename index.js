@@ -28,15 +28,15 @@ var suppressed = {
 };
 
 
-// Function to send event to Slack's Incoming Webhook
-function sendSlack(message) {
+// Function to send event to Telegram
+function sendTelegram(message) {
 
     var name = message.name;
     var event = message.event;
     var description = message.description;
 
-    // If a Slack URL is not set, we do not want to continue and nofify the user that it needs to be set
-    if (!conf.slack_url) return console.error("There is no Slack URL set, please set the Slack URL: 'pm2 set pm2-slack:slack_url https://slack_url'");
+    // If a Telegram URL is not set, we do not want to continue and nofify the user that it needs to be set. URL must be formatted as ' https://api.telegram.org/bot<TOKEN>/sendMessage'
+    if (!conf.telegram_url) return console.error("There is no telegram URL set, please set the telegram URL: 'pm2 set pm2-telegram-notify:telegram_url https://telegram_url'");
 
     // The default color for events should be green
     var color = '#008E00';
@@ -45,8 +45,8 @@ function sendSlack(message) {
         color = '#D00000';
     }
 
-    // The JSON payload to send to the Webhook
-    var payload = {
+    // The JSON payload to send to the telegram
+    var text  = {
         username: conf.username || os.hostname(),
         attachments: [{
             fallback: name + ' - ' + event + ' - ' + description,
@@ -62,16 +62,17 @@ function sendSlack(message) {
     // Options for the post request
     var options = {
         method: 'post',
-        body: payload,
+        headers: {'content-type' : 'application/x-www-form-urlencoded'},
+        body: "chat_id=<YOUR CHAT_ID>&text="+text,
         json: true,
-        url: conf.slack_url
+        url: conf.telegram_url
     };
 
-    // Finally, make the post request to the Slack Incoming Webhook
+    // Finally, make the post request to the Telegram
     request(options, function(err, res, body) {
         if (err) return console.error(err);
         if (body !== 'ok') {
-            console.error('Error sending notification to Slack, verify that the Slack URL for incoming webhooks is correct.');
+            console.error('Error sending notification to Telegram, verify that the Telegram URL for incoming message is correct.');
         }
     });
 }
@@ -118,7 +119,7 @@ function processQueue() {
             suppressed.isSuppressed = true;
             suppressed.date = new Date().getTime();
             sendSlack({
-                name: 'pm2-slack',
+                name: 'pm2-telegram-notify',
                 event: 'suppressed',
                 description: 'Messages are being suppressed due to rate limiting.'
             });
@@ -143,7 +144,7 @@ pm2.launchBus(function(err, bus) {
     // Listen for process logs
     if (conf.log) {
         bus.on('log:out', function(data) {
-            if (data.process.name !== 'pm2-slack') {
+            if (data.process.name !== 'pm2-telegram-notify') {
                 messages.push({
                     name: data.process.name,
                     event: 'log',
@@ -157,7 +158,7 @@ pm2.launchBus(function(err, bus) {
     // Listen for process errors
     if (conf.error) {
         bus.on('log:err', function(data) {
-            if (data.process.name !== 'pm2-slack') {
+            if (data.process.name !== 'pm2-telegram-notify') {
                 messages.push({
                     name: data.process.name,
                     event: 'error',
@@ -183,7 +184,7 @@ pm2.launchBus(function(err, bus) {
     // Listen for process exceptions
     if (conf.exception) {
         bus.on('process:exception', function(data) {
-            if (data.process.name !== 'pm2-slack') {
+            if (data.process.name !== 'pm2-telegram-notify') {
                 messages.push({
                     name: data.process.name,
                     event: 'exception',
@@ -197,7 +198,7 @@ pm2.launchBus(function(err, bus) {
     // Listen for PM2 events
     bus.on('process:event', function(data) {
         if (conf[data.event]) {
-            if (data.process.name !== 'pm2-slack') {
+            if (data.process.name !== 'pm2-telegram-notify') {
                 messages.push({
                     name: data.process.name,
                     event: data.event,
