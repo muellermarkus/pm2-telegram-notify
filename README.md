@@ -50,8 +50,8 @@ Example: The following configuration options will enable message buffering, and 
 
 ```
 pm2 set pm2-telegram-notify:username pm2-user
-pm2 set pm2-slack:buffer true
-pm2 set pm2-slack:buffer_seconds 2
+pm2 set pm2-telegram-notify:buffer true
+pm2 set pm2-telegram-notify:buffer_seconds 2
 ```
 
 ## Contributing
@@ -60,11 +60,4 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 
-- 0.3.4 Added an option to override the Slack username
-- 0.3.3 Added documentation for the reload event
-- 0.3.2 Fixed Half width of error and log messages (thanks @ma-zal)
-- 0.3.1 Fixed Double escaping of error and log messages (thanks @ma-zal)
-- 0.3.0 Switched to a default buffer system that groups alike messages by timestamp in the same message to Slack (thanks @kjhangiani)
-- 0.2.0 Implemented a rate limiting system and updated all the dependencies
-- 0.1.1 Commenting & Clean up
 - 0.1.0 Initial Release
