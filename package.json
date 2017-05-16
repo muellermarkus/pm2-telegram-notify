@@ -4,7 +4,7 @@
   "description": "A PM2 module to emit events to Telegram",
   "main": "index.js",
   "scripts": {
-    "test": "/home/us_er/.nvm/versions/node/v4.2.6/bin/mocha --reporter spec"
+    "test": "/<path_to>/bin/mocha --reporter spec"
   },
   "repository": {
     "type": "git",
