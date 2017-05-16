@@ -35,23 +35,26 @@ function sendTelegram(message) {
     if (!conf.telegram_url) return console.error("There is no telegram URL set, please set the telegram URL: 'pm2 set pm2-telegram-notify:telegram_url https://telegram_url'");
 
 
-    // Text to send to the telegram
-    var text  = (name + ' - ' + event +  ' - ' +  description);
+    //Check for description's content
+    if (description !== "YYYY-MM-DD HH:mm Z:") {
+    //Text for sending to telegram, must be <string>
+     var text  = (name + ' - ' + event +  ' - ' +  description);
 
-    // Options for the post request
-    var options = {
-        method: 'post',
-        headers: {'content-type' : 'application/x-www-form-urlencoded'},
-        body: "chat_id=<>&text="+text,
-        json: true,
-        url: conf.telegram_url
-    };
+      // Options for the post request
+      var options = {
+          method: 'post',
+          headers: {'content-type' : 'application/x-www-form-urlencoded'},
+          body: "chat_id=conf.chat_id&text="+text,
+          json: true,
+          url: conf.telegram_url
+      };
 
-    // Finally, make the post request to the Telegram
-    request(options, function(err, res, body) {
-        if (err) return console.error(err);
-        console.log(body)
-    });
+     // Finally, make the post request to the Telegram
+     request(options, function(err, res, body) {
+         if (err) return console.error(err);
+         console.log(body)
+     });
+   }
 }
 
 // Function to get the next buffer of messages (buffer length = 1s)
