@@ -9,7 +9,14 @@ To install and setup pm2-telegram-notify, run the following commands:
 ```
 pm2 install pm2-telegram-notify
 ```
+ 
+## Set Telegram URL
 
+You must set Telegram URL by following command:
+
+```
+pm2 set pm2-telegram-notify:telegram_url https://api.telegram.org/bot<YOUR BOT TOKEN>/sendMessage 
+```
 
 ## Configure
 
@@ -39,7 +46,7 @@ pm2 set pm2-telegram-notify:error false
 
 The following options are available:
 
-- username (string) - Set the username used in Slack for posting the message. By default this is the hostname of the server.
+
 - buffer (bool) - Enable/Disable buffering of messages by timestamp. Messages that occur with the same timestamp (seconds) will be concatenated together and posted as a single slack message. Default: true
 - buffer_seconds (int) - Duration in seconds to aggregate messages. Has no effect if buffer is set to false.  Min: 1, Max: 5, Default: 1
 - queue_max (int) - Number of messages to keep queued before the queue will be truncated. When the queue exceeds this maximum, a rate limit message will be posted to slack. Min: 10, Max: 100, Default: 100
