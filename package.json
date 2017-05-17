@@ -4,7 +4,7 @@
   "description": "A PM2 module to emit events to Telegram",
   "main": "index.js",
   "scripts": {
-    "test": "/<path_to>/bin/mocha --reporter spec"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -38,7 +38,6 @@
     "request": "^2.81.0"
   },
   "config": {
-    "chat_id": null,
     "telegram_url": null,
     "log": false,
     "error": true,
@@ -55,10 +54,5 @@
     "buffer": true,
     "buffer_seconds": 1,
     "queue_max": 10
-  },
-  "devDependencies": {
-    "chai": "^3.5.0",
-    "chai-http": "^3.0.0",
-    "mocha": "^3.4.1"
   }
 }
