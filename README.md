@@ -12,10 +12,11 @@ pm2 install pm2-telegram-notify
  
 ## Set Telegram URL
 
-You must set Telegram URL by following command:
+You must set chat_id and  Telegram URL by following commands:
 
 ```
-pm2 set pm2-telegram-notify:telegram_url https://api.telegram.org/bot<YOUR BOT TOKEN>/sendMessage 
+pm2 set pm2-telegram-notify:telegram_url https://api.telegram.org/bot<YOUR BOT TOKEN>/sendMessage
+pm2 set pm2-telegram-notify:chat_id <YOUR CHAT_ID>
 ```
 
 ## Configure
