@@ -22,7 +22,7 @@
       "url": "https://github.com/mattpker"
     }
   ],
-  "licenses": [
+  "license": [
     {
       "type": "MIT",
       "url": "https://github.com/korolyov88/pm2-telegram-notify/blob/master/LICENSE"
@@ -38,6 +38,7 @@
     "request": "^2.81.0"
   },
   "config": {
+    "chat_id": null,
     "telegram_url": null,
     "log": false,
     "error": true,

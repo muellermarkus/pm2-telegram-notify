@@ -44,7 +44,7 @@ function sendTelegram(message) {
       var options = {
           method: 'post',
           headers: {'content-type' : 'application/x-www-form-urlencoded'},
-          body: "chat_id=conf.chat_id&text="+text,
+          body: "chat_id="+conf.chat_id+"&text="+text,
           json: true,
           url: conf.telegram_url
       };
