@@ -14,6 +14,14 @@ pm2 install pm2-telegram-notify
 
 You must set chat_id and  Telegram URL by following commands:
 
+P.S If your chat_id is signed integer, like "-9874365643", it must be set in package.json
+
+```
+ "config": {
+    "chat_id": -9874365643,
+
+```
+
 ```
 pm2 set pm2-telegram-notify:telegram_url https://api.telegram.org/bot<YOUR BOT TOKEN>/sendMessage
 pm2 set pm2-telegram-notify:chat_id <YOUR CHAT_ID>
