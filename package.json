@@ -28,7 +28,7 @@
       "url": "https://github.com/korolyov88/pm2-telegram-notify/blob/master/LICENSE"
     }
   ],
-  "bugs": {
+   "bugs": {
     "url": "https://github.com/korolyov88/pm2-telegram-notify/issues"
   },
   "homepage": "https://github.com/korolyov88/pm2-telegram-notify",
