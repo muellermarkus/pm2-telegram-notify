@@ -22,12 +22,7 @@
       "url": "https://github.com/mattpker"
     }
   ],
-  "license": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/korolyov88/pm2-telegram-notify/blob/master/LICENSE"
-    }
-  ],
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/korolyov88/pm2-telegram-notify/issues"
   },
