@@ -3,6 +3,7 @@
 var pm2 = require('pm2');
 var pmx = require('pmx');
 var request = require('request');
+var moment = require('moment');
 
 // Get the configuration from PM2
 var conf = pmx.initModule();
@@ -36,7 +37,7 @@ function sendTelegram(message) {
 
 
     //Check for description's content
-    if (description !== "YYYY-MM-DD HH:mm Z:") {
+    if (description !== moment().format('YYYY-MM-DD HH:mm Z:')) {
     //Text for sending to telegram, must be <string>
      var text  = (name + ' - ' + event +  ' - ' +  description);
 
