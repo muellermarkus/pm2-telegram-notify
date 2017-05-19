@@ -1,6 +1,6 @@
 {
   "name": "pm2-telegram-notify",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A PM2 module to emit events to Telegram",
   "main": "index.js",
   "scripts": {
@@ -32,7 +32,6 @@
     "pmx": "^1.2.0",
     "request": "^2.81.0"
   },
-
   "config": {
     "chat_id": null,
     "telegram_url": null,
