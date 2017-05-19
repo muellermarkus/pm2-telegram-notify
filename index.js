@@ -37,7 +37,7 @@ function sendTelegram(message) {
 
 
     //Check for description's content
-    if (description.length > 30 )) {
+    if (description.length > 30) {
     //Text for sending to telegram, must be <string>
      var text  = (name + ' - ' + event +  ' - ' +  description);
 
