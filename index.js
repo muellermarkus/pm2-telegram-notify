@@ -10,7 +10,7 @@ var conf = pmx.initModule();
 
 // initialize buffer and queue_max opts
 // buffer seconds can be between 1 and 5
-conf.buffer_seconds = (conf.buffer_seconds > 0 && conf.buffer_seconds < 20) ? conf.buffer_seconds : 15;
+conf.buffer_seconds = (conf.buffer_seconds > 1 && conf.buffer_seconds < 5) ? conf.buffer_seconds : 2;
 
 // queue max can be between 10 and 100
 conf.queue_max = (conf.queue_max > 9 && conf.queue_max <= 100) ? conf.queue_max : 10;
@@ -35,14 +35,14 @@ function sendTelegram(message) {
 
     // If a Telegram URL is not set, we do not want to continue and nofify the user that it needs to be set. URL must be formatted as ' https://api.telegram.org/bot<TOKEN>/sendMessage'
     if (!conf.telegram_url) return console.error("There is no telegram URL set, please set the telegram URL: 'pm2 set pm2-telegram-notify:telegram_url https://telegram_url'");
-   
- // checks for event name and timestamps
-  if ((event == 'log' && messages[0].event =='error')  && (timestamp <= messages[0].timestamp)) {
-      
+
+  // checks for event name and timestamps
+  if ((event == 'log' && messages[0].event == 'error' )  && (timestamp <= messages[0].timestamp)) {
+
     //Check for description's content
     if (description.length > 30) {
     //Text for sending to telegram, must be <string>
-     var text  = (name + ' - ' + (event == 'log' && 'error') +  ' - ' +  description + messages[0].description);
+     var text  = (name + ' - ' + (event == 'log' && 'error')  +  ' - ' +  description + messages[0].description);
 
       // Options for the post request
       var options = {
@@ -59,7 +59,7 @@ function sendTelegram(message) {
          console.log(body)
      });
     }
-  } 
+  }
 }
 
 // Function to get the next buffer of messages (buffer length = 1s)
@@ -126,7 +126,7 @@ function processQueue() {
 // Start listening on the PM2 BUS
 pm2.launchBus(function(err, bus) {
 
-    
+
     // Listen for process logs
     if (conf.log) {
         bus.on('log:out', function(data) {
