@@ -43,16 +43,16 @@ function sendTelegram(message) {
     //Check for description's content
     if (description.length > 30) {
     //Text for sending to telegram, must be <string>
-     var length = 2000;
-     var cuttedDesc = description.substr(0, length);   
-     var text  = (name + ' - ' + (event == 'log' && 'error') +  ' - ' +  cuttedDesc + messages[0].description.substr(0, length));
+     var length = 4096;   
+     var text  = (name + ' - ' + (event == 'log' && 'error') +  ' - ' +  description + messages[0].description);
+     var cuttedDesc = text.substring(0, length);
      
         
       // Options for the post request
       var options = {
           method: 'post',
           headers: {'content-type' : 'application/x-www-form-urlencoded'},
-          body: "chat_id="+conf.chat_id+"&text="+text,
+          body: "chat_id="+conf.chat_id+"&text="+cuttedDesc,
           json: true,
           url: conf.telegram_url
       };
