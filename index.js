@@ -9,7 +9,7 @@ var request = require('request');
 var conf = pmx.initModule();
 
 // initialize buffer and queue_max opts
-// buffer seconds can be between 1 and 5
+// buffer seconds can be between 0 and 5
 conf.buffer_seconds = (conf.buffer_seconds > 0 && conf.buffer_seconds < 5) ? conf.buffer_seconds : 2;
 
 // queue max can be between 10 and 100
@@ -32,22 +32,22 @@ function sendTelegram(message) {
     var event = message.event;
     var description = message.description;
     var timestamp = message.timestamp;
-    
+
 
     // If a Telegram URL is not set, we do not want to continue and nofify the user that it needs to be set. URL must be formatted as ' https://api.telegram.org/bot<TOKEN>/sendMessage'
     if (!conf.telegram_url) return console.error("There is no telegram URL set, please set the telegram URL: 'pm2 set pm2-telegram-notify:telegram_url https://telegram_url'");
-   
+
  // checks for event name and timestamps
   if (((event == 'log' && messages[0].event =='error')  && (timestamp <= messages[0].timestamp)) || event == 'exception'){
-      
+
     //Check for description's content
     if (description.length > 30) {
     //Text for sending to telegram, must be <string>
      var length = 4096;   
      var text  = (name + ' - ' + (event == 'log' && 'error') +  ' - ' +  description + messages[0].description);
      var cuttedDesc = text.substring(0, length);
-     
-        
+
+
       // Options for the post request
       var options = {
           method: 'post',
@@ -56,7 +56,7 @@ function sendTelegram(message) {
           json: true,
           url: conf.telegram_url
       };
-        
+
 
      // Finally, make the post request to the Telegram
      request(options, function(err, res, body) {
