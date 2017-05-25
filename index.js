@@ -9,7 +9,7 @@ var request = require('request');
 var conf = pmx.initModule();
 
 // initialize buffer and queue_max opts
-// buffer seconds can be between 0 and 5
+// buffer seconds can be between 1 and 5
 conf.buffer_seconds = (conf.buffer_seconds > 0 && conf.buffer_seconds < 5) ? conf.buffer_seconds : 2;
 
 // queue max can be between 10 and 100
@@ -32,31 +32,34 @@ function sendTelegram(message) {
     var event = message.event;
     var description = message.description;
     var timestamp = message.timestamp;
-
+    
 
     // If a Telegram URL is not set, we do not want to continue and nofify the user that it needs to be set. URL must be formatted as ' https://api.telegram.org/bot<TOKEN>/sendMessage'
     if (!conf.telegram_url) return console.error("There is no telegram URL set, please set the telegram URL: 'pm2 set pm2-telegram-notify:telegram_url https://telegram_url'");
-
- // checks for event name and timestamps
-  if (((event == 'log' && messages[0].event =='error')  && (timestamp <= messages[0].timestamp)) || event == 'exception'){
-
+   
+    console.log(messages.length) 
+ 
+    // checks for event name and timestamps
+  if ((messages.length != 0) && (event =='log' && messages[0].event == 'error')  && (timestamp <= messages[0].timestamp)) {
+      
     //Check for description's content
     if (description.length > 30) {
     //Text for sending to telegram, must be <string>
-     var length = 4096;   
-     var text  = (name + ' - ' + (event == 'log' && 'error') +  ' - ' +  description + messages[0].description);
-     var cuttedDesc = text.substring(0, length);
-
-
+     var length = 2000;
+     var cutDesc = description.substring(0, length);
+     var cutPrevDesc = messages[0].description.substring(0, length);
+     var text  = (name + ' - ' + '*' + messages[0].event + '*' +  ' - ' + cutDesc + '\n ' + '*' + cutPrevDesc + '*');
+     
+        
       // Options for the post request
-      var options = {
+     var options = {
           method: 'post',
           headers: {'content-type' : 'application/x-www-form-urlencoded'},
-          body: "chat_id="+conf.chat_id+"&text="+cuttedDesc,
+          body: "chat_id="+conf.chat_id+"&text="+text + '&parse_mode=markdown',
           json: true,
           url: conf.telegram_url
-      };
-
+     };
+        
 
      // Finally, make the post request to the Telegram
      request(options, function(err, res, body) {
@@ -78,7 +81,7 @@ function bufferMessage() {
     // continue shifting elements off the queue while they are the same event and timestamp so they can be buffered together into a single request
     while (messages.length
         && (messages[0].timestamp >= nextMessage.timestamp && messages[0].timestamp < (nextMessage.timestamp  + conf.buffer_seconds))
-        && messages[0].event === nextMessage.event) {
+        && messages[0].event != nextMessage.event) {
 
         // append description to our buffer and shift the message off the queue and discard it
         nextMessage.buffer.push(messages[0].description);
