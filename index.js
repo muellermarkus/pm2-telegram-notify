@@ -36,12 +36,7 @@ function sendTelegram(message) {
 
     // If a Telegram URL is not set, we do not want to continue and nofify the user that it needs to be set. URL must be formatted as ' https://api.telegram.org/bot<TOKEN>/sendMessage'
     if (!conf.telegram_url) return console.error("There is no telegram URL set, please set the telegram URL: 'pm2 set pm2-telegram-notify:telegram_url https://telegram_url'");
-   
-    console.log(messages.length) 
- 
-    // checks for event name and timestamps
-  if ((messages.length != 0) && (event =='log' && messages[0].event == 'error')  && (timestamp <= messages[0].timestamp)) {
-      
+    
     //Check for description's content
     if (description.length > 30) {
     //Text for sending to telegram, must be <string>
@@ -66,7 +61,6 @@ function sendTelegram(message) {
          if (err) return console.error(err);
          console.log(body)
      });
-    }
   } 
 }
 
